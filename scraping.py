@@ -1,4 +1,3 @@
-
 # Import Splinter, BeautifulSoup, and Pandas
 from splinter import Browser
 from bs4 import BeautifulSoup as soup
@@ -6,18 +5,15 @@ import pandas as pd
 import datetime as dt
 from webdriver_manager.chrome import ChromeDriverManager
 
-# Set up Splinter
-executable_path = {'executable_path': ChromeDriverManager().install()}
-browser = Browser('chrome', **executable_path, headless=False)
 
 def scrape_all():
     # Initiate headless driver for deployment
     executable_path = {'executable_path': ChromeDriverManager().install()}
     browser = Browser('chrome', **executable_path, headless=True)
-    
+
     news_title, news_paragraph = mars_news(browser)
 
-    # Run all scraping functions and store results in dictionary
+    # Run all scraping functions and store results in a dictionary
     data = {
         "news_title": news_title,
         "news_paragraph": news_paragraph,
@@ -30,11 +26,14 @@ def scrape_all():
     browser.quit()
     return data
 
+
 def mars_news(browser):
-    
+
     # Scrape Mars News
-    # Visit the Mars news site
-    url = 'https://redplanetscience.com/'
+    # Visit the mars nasa news site
+    url = 'https://redplanetscience.com'
+    # Visit the mars nasa news site
+    url = 'https://data-class-mars.s3.amazonaws.com/Mars/index.html'
     browser.visit(url)
 
     # Optional delay for loading the page
@@ -51,15 +50,16 @@ def mars_news(browser):
         news_title = slide_elem.find('div', class_='content_title').get_text()
         # Use the parent element to find the paragraph text
         news_p = slide_elem.find('div', class_='article_teaser_body').get_text()
-    
+
     except AttributeError:
         return None, None
 
     return news_title, news_p
 
-# ## JPL Space Images Featured Image
 
 def featured_image(browser):
+    # Visit URL
+    url = 'https://spaceimages-mars.com'
     # Visit URL
     url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html'
     browser.visit(url)
@@ -72,7 +72,7 @@ def featured_image(browser):
     html = browser.html
     img_soup = soup(html, 'html.parser')
 
-     # Add try/except for error handling
+    # Add try/except for error handling
     try:
         # Find the relative image url
         img_url_rel = img_soup.find('img', class_='fancybox-image').get('src')
@@ -80,12 +80,12 @@ def featured_image(browser):
     except AttributeError:
         return None
 
-    # Use the base url to create an absolute url
+    # Use the base URL to create an absolute URL
     img_url = f'https://spaceimages-mars.com/{img_url_rel}'
+    # Use the base url to create an absolute url
+    img_url = f'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/{img_url_rel}'
 
     return img_url
-
-# ## Mars Facts
 
 def mars_facts():
     # Add try/except for error handling
